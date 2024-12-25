@@ -12,7 +12,7 @@ export default function MyCalendar<T extends DateValue>(
   return (
     <Calendar {...props} className={classes['react-aria-Calendar']}>
       <header>
-        <Button slot="previous">◀</Button>
+        <Button className={classes['react-aria-Button'] } slot="previous">◀</Button>
         <Heading className={classes['react-aria-Heading']} />
         <Button className={classes['react-aria-Button'] } slot="next">▶</Button>
       </header>
