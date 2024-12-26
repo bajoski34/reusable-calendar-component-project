@@ -1,5 +1,13 @@
 /* @import "@react-aria/example-theme"; */
 
+
+:root {
+
+  --highlight-background: #9d00fc;
+  --highlight-foreground: #FFFFFF;
+  --text-color-disabled: #e68c8c;
+}
+
 .react-aria-Calendar {
   width: fit-content;
   max-width: 100%;
@@ -50,6 +58,10 @@
     &[data-selected] {
       background: var(--highlight-background);
       color: var(--highlight-foreground);
+    }
+
+    &[data-disabled] {
+      color: var(--text-color-disabled);
     }
   }
 }

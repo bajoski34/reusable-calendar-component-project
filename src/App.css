@@ -1,3 +1,10 @@
+:root {
+  --highlight-background: pink;
+}
+
+
+
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
