@@ -1,1 +1,1 @@
-export API_BASE_URL = process.env.API_BASE_URL || 'https://reusable-calendar-api.onrender.com';
+export const API_BASE_URL = import.meta.env.API_BASE_URL || 'https://reusable-calendar-api.onrender.com';

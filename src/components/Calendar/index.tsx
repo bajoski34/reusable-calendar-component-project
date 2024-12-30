@@ -1,56 +1,112 @@
-import {useEffect, useRef} from 'react';
-import type {CalendarProps, DateValue} from 'react-aria-components';
-import {Button, Calendar, CalendarCell, CalendarGrid, Heading, Text} from 'react-aria-components';
-import classes from './style.module.css';
+import { useEffect, useRef, useState, Suspense } from "react";
+import type { CalendarProps, DateValue } from "react-aria-components";
+import {
+  Button,
+  Calendar,
+  CalendarCell,
+  CalendarGrid,
+  Heading,
+  Text,
+} from "react-aria-components";
+import { useCompanyColor } from "../../hooks/useCompanyColor";
+import classes from "./style.module.css";
+import {parseDate, today} from '@internationalized/date';
 
-interface MyCalendarProps<T extends DateValue> extends CalendarProps<T> {
-  errorMessage?: string;
-}
+// Constants for default states
+const DEFAULT_HIGHLIGHT_BACKGROUND = "none";
+const DEFAULT_HIGHLIGHT_FOREGROUND = "white";
+const DEFAULT_DATE = today();
 
-const getRandomColor = () => {
-  // Generate a random hex color
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
+// Types for company details
+type CompanyDetails = {
+  bgColor: string | null;
+  name: string;
+  id: string;
 };
 
-export default function MyCalendar<T extends DateValue>(
-  { errorMessage, ...props }: MyCalendarProps<T>
-) {
+// Extended Calendar props
+interface MyCalendarProps<T extends DateValue> extends CalendarProps<T> {
+  errorMessage?: string;
+  companyId: string;
+}
 
-  const calendarRef = useRef(null);
+// Reusable component
+export default function MyCalendar<T extends DateValue>({
+  errorMessage,
+  companyId,
+  ...props
+}: MyCalendarProps<T>) {
+  const { bgColor, error: companyError } = useCompanyColor(companyId); // Hook to get company colors
+  const calendarRef = useRef<HTMLDivElement>(null);
+  const [shouldDisable, setShouldDisable] = useState(false);
+  const [currentError, setCurrentError] = useState(errorMessage || "");
+  const [value, setValue] = useState(DEFAULT_DATE);
 
-  useEffect(function() {
-    
-    const timeoutId = setTimeout(() => {}, 1000);
+  // Update calendar styles based on company details
+  useEffect(() => {
+    if (calendarRef.current) {
+      const calendarElement = calendarRef.current;
 
-    if(calendarRef.current) {
-      let htmlElement = calendarRef.current;
-      htmlElement.style.setProperty('--highlight-background', getRandomColor());
-      htmlElement.style.setProperty('--highlight-foreground', 'black');
+      // Set calendar styles
+      calendarElement.style.setProperty(
+        "--highlight-background",
+        bgColor || DEFAULT_HIGHLIGHT_BACKGROUND
+      );
+      calendarElement.style.setProperty(
+        "--highlight-foreground",
+        DEFAULT_HIGHLIGHT_FOREGROUND
+      );
     }
 
-    return () => {
-      clearTimeout(timeoutId);
+    // Update error state and disable status
+    if (companyError) {
+      setShouldDisable(true);
+      setCurrentError(companyError);
+    } else {
+      setShouldDisable(false);
+      setCurrentError(errorMessage || "");
     }
-    
-  },[]);
-
+  }, [bgColor, companyError, errorMessage]);
 
   return (
-    <Calendar {...props} ref={calendarRef}  className={classes['react-aria-Calendar']}>
-      <header>
-        <Button className={classes['react-aria-Button'] } slot="previous">◀</Button>
-        <Heading className={classes['react-aria-Heading']} />
-        <Button className={classes['react-aria-Button'] } slot="next">▶</Button>
-      </header>
-      <CalendarGrid>
-        {(date) => <CalendarCell className={classes['react-aria-CalendarCell']} date={date} />}
-      </CalendarGrid>
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
-    </Calendar>
+    <Suspense fallback={<div>...Loading...</div>}>
+      <Calendar
+        {...props}
+        ref={calendarRef}
+        className={classes["react-aria-Calendar"]}
+        isDisabled={shouldDisable}
+        minValue={DEFAULT_DATE}
+        value={value} 
+        onChange={setValue}
+      >
+        {/* Header section */}
+        <header>
+          <Button className={classes["react-aria-Button"]} slot="previous">
+            ◀
+          </Button>
+          <Heading className={classes["react-aria-Heading"]} />
+          <Button className={classes["react-aria-Button"]} slot="next">
+            ▶
+          </Button>
+        </header>
+
+        {/* Calendar grid */}
+        <CalendarGrid>
+          {(date) => (
+            <CalendarCell
+              className={classes["react-aria-CalendarCell"]}
+              date={date}
+            />
+          )}
+        </CalendarGrid>
+
+        {/* Error message */}
+        {currentError && (
+          <Text slot="errorMessage" className={classes["react-aria-ErrorMessage"]}>
+            {currentError}
+          </Text>
+        )}
+      </Calendar>
+    </Suspense>
   );
 }

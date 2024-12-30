@@ -10,8 +10,8 @@ function App() {
 
   return (
     <div style={{ display: "flex", gap: "1.5em" }}>
-      <MyCalendar defaultValue={today()} companyId={1} />
-      <MyCalendar value={value} onChange={setValue} minValue={today()} companyId={1} />
+      <MyCalendar companyId={3} />
+      <MyCalendar  companyId={1} />
     </div>
   )
 }
