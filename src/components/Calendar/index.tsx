@@ -71,11 +71,11 @@ export default function MyCalendar({
         {/* Header section */}
         <header>
           <Button className={classes["react-aria-Button"]} slot="previous">
-            &larr;
+            {String.fromCharCode(9664)}
           </Button>
           <Heading className={classes["react-aria-Heading"]} />
           <Button className={classes["react-aria-Button"]} slot="next">
-            &rarr;
+            {String.fromCharCode(9654)}
           </Button>
         </header>
 
