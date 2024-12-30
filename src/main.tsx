@@ -1,10 +1,13 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import MyCalendar from './components/Calendar'
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+window.initMyCalendar = (props: { companyId: string, errorMessage?: string }) => {
+  const container = document.getElementById('calendar-container');
+
+  createRoot(container!).render(
+    <StrictMode>
+      <MyCalendar companyId={props.companyId} />
+    </StrictMode>,
+  )
+};

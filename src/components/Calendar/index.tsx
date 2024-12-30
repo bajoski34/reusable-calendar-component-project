@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, Suspense } from "react";
-import type { CalendarProps, DateValue } from "react-aria-components";
 import {
   Button,
   Calendar,
@@ -10,36 +9,27 @@ import {
 } from "react-aria-components";
 import { useCompanyColor } from "../../hooks/useCompanyColor";
 import classes from "./style.module.css";
-import {parseDate, today} from '@internationalized/date';
+import {today, getLocalTimeZone} from '@internationalized/date';
 
 // Constants for default states
 const DEFAULT_HIGHLIGHT_BACKGROUND = "none";
 const DEFAULT_HIGHLIGHT_FOREGROUND = "white";
-const DEFAULT_DATE = today();
-
-// Types for company details
-type CompanyDetails = {
-  bgColor: string | null;
-  name: string;
-  id: string;
-};
+const DEFAULT_DATE = today(getLocalTimeZone());
 
 // Extended Calendar props
-interface MyCalendarProps<T extends DateValue> extends CalendarProps<T> {
+interface MyCalendarProps{
   errorMessage?: string;
   companyId: string;
 }
 
 // Reusable component
-export default function MyCalendar<T extends DateValue>({
-  errorMessage,
-  companyId,
-  ...props
-}: MyCalendarProps<T>) {
+export default function MyCalendar({
+  companyId
+}: MyCalendarProps) {
   const { bgColor, error: companyError } = useCompanyColor(companyId); // Hook to get company colors
   const calendarRef = useRef<HTMLDivElement>(null);
   const [shouldDisable, setShouldDisable] = useState(false);
-  const [currentError, setCurrentError] = useState(errorMessage || "");
+  const [currentError, setCurrentError] = useState("");
   const [value, setValue] = useState(DEFAULT_DATE);
 
   // Update calendar styles based on company details
@@ -64,14 +54,13 @@ export default function MyCalendar<T extends DateValue>({
       setCurrentError(companyError);
     } else {
       setShouldDisable(false);
-      setCurrentError(errorMessage || "");
+      setCurrentError("");
     }
-  }, [bgColor, companyError, errorMessage]);
+  }, [bgColor, companyError]);
 
   return (
     <Suspense fallback={<div>...Loading...</div>}>
       <Calendar
-        {...props}
         ref={calendarRef}
         className={classes["react-aria-Calendar"]}
         isDisabled={shouldDisable}
