@@ -47,6 +47,11 @@ export default function MyCalendar({
         "--highlight-foreground",
         DEFAULT_HIGHLIGHT_FOREGROUND
       );
+
+      calendarElement.style.setProperty(
+        "--focus-ring-color",
+        bgColor
+      );
     }
 
     // Update error state and disable status
