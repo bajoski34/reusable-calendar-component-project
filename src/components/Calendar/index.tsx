@@ -31,7 +31,6 @@ export default function MyCalendar({
   const [shouldDisable, setShouldDisable] = useState(false);
   const [currentError, setCurrentError] = useState("");
   const [value, setValue] = useState(DEFAULT_DATE);
-  const [focusDate, setFocusDate] = useState(DEFAULT_DATE);
 
   // Update calendar styles based on company details
   useEffect(() => {
@@ -50,7 +49,7 @@ export default function MyCalendar({
 
       calendarElement.style.setProperty(
         "--focus-ring-color",
-        bgColor
+        bgColor || DEFAULT_HIGHLIGHT_BACKGROUND
       );
     }
 
@@ -72,9 +71,7 @@ export default function MyCalendar({
         isDisabled={shouldDisable}
         minValue={DEFAULT_DATE}
         value={value}
-        focusedValue={focusDate}
         onChange={setValue}
-        onFocusChange={setFocusDate}
       >
         {/* Header section */}
         <header>
